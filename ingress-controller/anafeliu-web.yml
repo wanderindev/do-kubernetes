@@ -28,3 +28,5 @@ spec:
         image: wanderindev/anafeliu-web:latest
         ports:
         - containerPort: 80
+      nodeSelector:
+        type: "worker"
