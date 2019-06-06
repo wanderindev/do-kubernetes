@@ -9,6 +9,9 @@ spec:
   tls:
   - hosts:
     - anafeliu.com
+    - feliu.io
+    - panamaincontext.com
+    - uslpanama.comk
     secretName: letsencrypt-prod
   rules:
   - host: anafeliu.com
@@ -16,4 +19,22 @@ spec:
       paths:
       - backend:
           serviceName: anafeliu-web
+          servicePort: 80
+  - host: feliu.io
+    http:
+      paths:
+      - backend:
+          serviceName: feliuio-web
+          servicePort: 80
+  - host: panamaincontext.com
+    http:
+      paths:
+      - backend:
+          serviceName: pic-web
+          servicePort: 80
+  - host: uslpanama.com
+    http:
+      paths:
+      - backend:
+          serviceName: usl-web
           servicePort: 80
