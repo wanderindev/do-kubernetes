@@ -9,9 +9,17 @@ spec:
   tls:
   - hosts:
     - anafeliu.com
+    - www.anafeliu.com
+    - felaro.org
+    - www.felaro.org
     - feliu.io
+    - www.feliu.io
     - panamaincontext.com
-    - uslpanama.comk
+    - www.panamaincontext.com
+    - uslpanama.com
+    - www.uslpanama.com
+    - wallcouture.com.pa
+    - www.wallcouture.com.pa
     secretName: letsencrypt-prod
   rules:
   - host: anafeliu.com
@@ -20,7 +28,31 @@ spec:
       - backend:
           serviceName: anafeliu-web
           servicePort: 80
+  - host: www.anafeliu.com
+    http:
+      paths:
+      - backend:
+          serviceName: anafeliu-web
+          servicePort: 80
+  - host: felaro.org
+    http:
+      paths:
+      - backend:
+          serviceName: felaro-web
+          servicePort: 80
+  - host: www.felaro.org
+    http:
+      paths:
+      - backend:
+          serviceName: felaro-web
+          servicePort: 80
   - host: feliu.io
+    http:
+      paths:
+      - backend:
+          serviceName: adg-web
+          servicePort: 80
+  - host: www.feliu.io
     http:
       paths:
       - backend:
@@ -32,9 +64,33 @@ spec:
       - backend:
           serviceName: pic-web
           servicePort: 80
+  - host: www.panamaincontext.com
+    http:
+      paths:
+      - backend:
+          serviceName: pic-web
+          servicePort: 80
   - host: uslpanama.com
     http:
       paths:
       - backend:
           serviceName: usl-web
+          servicePort: 80
+  - host: www.uslpanama.com
+    http:
+      paths:
+      - backend:
+          serviceName: usl-web
+          servicePort: 80
+  - host: wallcouture.com.pa
+    http:
+      paths:
+      - backend:
+          serviceName: wallcouture-web
+          servicePort: 80
+  - host: www.wallcouture.com.pa
+    http:
+      paths:
+      - backend:
+          serviceName: wallcouture-web
           servicePort: 80

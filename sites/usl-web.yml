@@ -1,31 +1,31 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: anafeliu-web
+  name: usl-web
 spec:
   ports:
   - port: 80
     targetPort: 80
   selector:
-    app: anafeliu-web
+    app: usl-web
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: anafeliu-web
+  name: usl-web
 spec:
   selector:
     matchLabels:
-      app: anafeliu-web
-  replicas: 3
+      app: usl-web
+  replicas: 1
   template:
     metadata:
       labels:
-        app: anafeliu-web
+        app: usl-web
     spec:
       containers:
-      - name: anafeliu-web
-        image: wanderindev/anafeliu-web:latest
+      - name: usl-web
+        image: wanderindev/usl-web:latest
         ports:
         - containerPort: 80
       nodeSelector:

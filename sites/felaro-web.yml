@@ -1,31 +1,31 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: anafeliu-web
+  name: felaro-web
 spec:
   ports:
   - port: 80
     targetPort: 80
   selector:
-    app: anafeliu-web
+    app: felaro-web
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: anafeliu-web
+  name: felaro-web
 spec:
   selector:
     matchLabels:
-      app: anafeliu-web
-  replicas: 3
+      app: felaro-web
+  replicas: 2
   template:
     metadata:
       labels:
-        app: anafeliu-web
+        app: felaro-web
     spec:
       containers:
-      - name: anafeliu-web
-        image: wanderindev/anafeliu-web:latest
+      - name: felaro-web
+        image: wanderindev/felaro-web:latest
         ports:
         - containerPort: 80
       nodeSelector:
