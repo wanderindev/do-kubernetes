@@ -8,15 +8,16 @@ metadata:
 spec:
   tls:
   - hosts:
+    - adgseguros.com.pa
+    - blog.adgseguros.com.pa
+    - fb.adgseguros.com.pa
+    - promos.adgseguros.com.pa
+    - www.adgseguros.com.pa
     - anafeliu.com
     - www.anafeliu.com
     - felaro.org
     - www.felaro.org
     - feliu.io
-    - adg.feliu.io
-    - blog.feliu.io
-    - fb.feliu.io
-    - promos.feliu.io
     - www.feliu.io
     - panamaincontext.com
     - blog.panamaincontext.com
@@ -25,8 +26,41 @@ spec:
     - www.uslpanama.com
     - wallcouture.com.pa
     - www.wallcouture.com.pa
+    - wanderin.dev
+    - www.wanderin.dev
+    - blog.wanderin.dev
     secretName: letsencrypt-prod
   rules:
+  - host: adgseguros.com.pa
+    http:
+      paths:
+        - backend:
+            serviceName: adg-web
+            servicePort: 80
+  - host: blog.adgseguros.com.pa
+    http:
+      paths:
+      - backend:
+          serviceName: adgblog-wordpress
+          servicePort: 80
+  - host: fb.adgseguros.com.pa
+    http:
+      paths:
+      - backend:
+          serviceName: adg-feedback
+          servicePort: 80
+  - host: promos.adgseguros.com.pa
+    http:
+      paths:
+      - backend:
+          serviceName: adgpromos-wordpress
+          servicePort: 80
+  - host: www.adgseguros.com.pa
+    http:
+      paths:
+        - backend:
+            serviceName: adg-web
+            servicePort: 80
   - host: anafeliu.com
     http:
       paths:
@@ -56,30 +90,6 @@ spec:
       paths:
       - backend:
           serviceName: feliuio-web
-          servicePort: 80
-  - host: adg.feliu.io
-    http:
-      paths:
-        - backend:
-            serviceName: adg-web
-            servicePort: 80
-  - host: blog.feliu.io
-    http:
-      paths:
-      - backend:
-          serviceName: adgblog-wordpress
-          servicePort: 80
-  - host: fb.feliu.io
-    http:
-      paths:
-      - backend:
-          serviceName: adg-feedback
-          servicePort: 80
-  - host: promos.feliu.io
-    http:
-      paths:
-      - backend:
-          serviceName: adgpromos-wordpress
           servicePort: 80
   - host: www.feliu.io
     http:
@@ -128,4 +138,22 @@ spec:
       paths:
       - backend:
           serviceName: wallcouture-web
+          servicePort: 80
+  - host: wanderin.dev
+    http:
+      paths:
+      - backend:
+          serviceName: wander-web
+          servicePort: 80
+  - host: blog.wanderin.dev
+    http:
+      paths:
+      - backend:
+          serviceName: wander-wordpress
+          servicePort: 80
+  - host: www.wanderin.dev
+    http:
+      paths:
+      - backend:
+          serviceName: wander-web
           servicePort: 80

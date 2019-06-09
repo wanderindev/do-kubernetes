@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wander-web
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: wander-web
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wander-web
+spec:
+  selector:
+    matchLabels:
+      app: wander-web
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wander-web
+    spec:
+      containers:
+      - name: wander-web
+        image: wanderindev/wanderindev-web:latest
+        ports:
+        - containerPort: 80
+      nodeSelector:
+        type: "worker"
