@@ -9,6 +9,17 @@ spec:
   selector:
     app: adg-web
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adg-feedback
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: adg-feedback
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24,8 +35,30 @@ spec:
         app: adg-web
     spec:
       containers:
-      - name: wallcouture-web
+      - name: adg-web
         image: wanderindev/adg-web:latest
+        ports:
+        - containerPort: 80
+      nodeSelector:
+        type: "worker"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adg-feedback
+spec:
+  selector:
+    matchLabels:
+      app: adg-feedback
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: adg-feedback
+    spec:
+      containers:
+      - name: adg-feedback
+        image: wanderindev/adg-feedback:latest
         ports:
         - containerPort: 80
       nodeSelector:

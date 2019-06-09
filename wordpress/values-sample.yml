@@ -1,0 +1,53 @@
+## Blog/Site Info
+wordpressUsername: wordpress
+wordpressPassword: password
+wordpressEmail: wp@sample.com
+wordpressFirstName: John
+wordpressLastName: Doe
+wordpressBlogName: John's Blog
+
+## Database Settings
+externalDatabase:
+  host: 131.25.3.71
+  user: wordpress
+  password: wppassword
+  database: wordpress
+  port: 32001
+
+## Disabling MariaDB
+mariadb:
+  enabled: false
+
+## Kubernetes configuration
+## For minikube, set this to NodePort, elsewhere use LoadBalancer or ClusterIP
+##
+service:
+  type: ClusterIP
+  # HTTP Port
+  port: 80
+
+
+## Enable persistence using Persistent Volume Claims
+## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+##
+persistence:
+  enabled: true
+  ## wordpress data Persistent Volume Storage Class
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  storageClass: "do-block-storage"
+  ##
+  ## If you want to reuse an existing claim, you can pass the name of the PVC using
+  ## the existingClaim variable
+  ## existingClaim: adg-wp
+  accessMode: ReadWriteOnce
+  size: 7Gi
+
+## Node labels for pod assignment
+## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+##
+nodeSelector: {type: "blog"}

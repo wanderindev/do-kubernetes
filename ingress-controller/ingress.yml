@@ -13,8 +13,13 @@ spec:
     - felaro.org
     - www.felaro.org
     - feliu.io
+    - adg.feliu.io
+    - blog.feliu.io
+    - fb.feliu.io
+    - promos.feliu.io
     - www.feliu.io
     - panamaincontext.com
+    - blog.panamaincontext.com
     - www.panamaincontext.com
     - uslpanama.com
     - www.uslpanama.com
@@ -50,7 +55,31 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: adg-web
+          serviceName: feliuio-web
+          servicePort: 80
+  - host: adg.feliu.io
+    http:
+      paths:
+        - backend:
+            serviceName: adg-web
+            servicePort: 80
+  - host: blog.feliu.io
+    http:
+      paths:
+      - backend:
+          serviceName: adgblog-wordpress
+          servicePort: 80
+  - host: fb.feliu.io
+    http:
+      paths:
+      - backend:
+          serviceName: adg-feedback
+          servicePort: 80
+  - host: promos.feliu.io
+    http:
+      paths:
+      - backend:
+          serviceName: adgpromos-wordpress
           servicePort: 80
   - host: www.feliu.io
     http:
@@ -63,6 +92,12 @@ spec:
       paths:
       - backend:
           serviceName: pic-web
+          servicePort: 80
+  - host: blog.panamaincontext.com
+    http:
+      paths:
+      - backend:
+          serviceName: pic-wordpress
           servicePort: 80
   - host: www.panamaincontext.com
     http:
