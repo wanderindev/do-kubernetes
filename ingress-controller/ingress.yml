@@ -18,6 +18,7 @@ spec:
     - felaro.org
     - www.felaro.org
     - feliu.io
+    - hr.feliu.io
     - www.feliu.io
     - panamaincontext.com
     - blog.panamaincontext.com
@@ -90,6 +91,12 @@ spec:
       paths:
       - backend:
           serviceName: feliuio-web
+          servicePort: 80
+  - host: hr.feliu.io
+    http:
+      paths:
+      - backend:
+          serviceName: hr-rest
           servicePort: 80
   - host: www.feliu.io
     http:
