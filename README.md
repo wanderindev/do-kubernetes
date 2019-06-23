@@ -25,7 +25,7 @@ cd do-managed-kubernetes
 ```
 ### Create the cluster and add nodes
 Fom the DigitalOcean dashboard, go to Kubernetes and create a cluster with 
-two node pool. 
+two node pools. 
 
 One pool will be for the database payloads and will have one node.
 
@@ -64,7 +64,7 @@ kubectl label nodes wid-db-jatk type=db
 kubectl label nodes wid-workers-2cpu-xzb4 type=worker
 kubectl label nodes wid-workers-2cpu-xmri type=worker
 ```
-###Deploying pods and services
+### Deploying pods and services
 Deploy all pods and associated services:
 ```sh
 kubectl apply -f ./sites
@@ -73,7 +73,7 @@ Or deploy individual pods and services, for instance:
 ```sh
 kubectl apply -f ./sites/anafeliu-web.yml
 ```
-###Deploy an Nginx ingress controller and cert-manager
+### Deploy an Nginx ingress controller and cert-manager
 Create mandatory resources and load balancer:
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.24.1/deploy/mandatory.yaml
@@ -104,7 +104,7 @@ kubectl apply -f ./ingress-controller/ingress.yml
 ```
 Refer to [this source](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-with-cert-manager-on-digitalocean-kubernetes)
 for more information.
-###Deploy PostgreSQL
+### Deploy PostgreSQL
 Modify, if needed, the `./postgresql/values-sample.yml` and install the PostgreSQL chart:
 ```sh
 helm install --name wid-pg -f ./postgresql/values-sample.yml stable/postgresql
@@ -113,7 +113,7 @@ Get the auto generated PostgreSQL password:
 ```sh
 kubectl get secret --namespace default wid-pg-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode
 ```
-###Deploy MySQL
+### Deploy MySQL
 Modify, if needed, the `./mysql/values-sample.yml` and install the MySQL chart:
 ```sh
 helm install --name wid-mysql -f ./values-sample.yml stable/mysql
