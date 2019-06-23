@@ -122,42 +122,6 @@ Get the auto generated MySQL password:
 ```sh
 kubectl get secret --namespace default wid-mysql -o jsonpath="{.data.mysql-root-password}" | base64 --decode; echo
 ```
-## Running tests
-From PyCharm, right-click in the `tests/system` or `tests/unit` directory and select 
-"Run tests with Coverage" to run either system or unit tests.
-
-## Testing with Postman
-
-Clone the [postman-hr-rest-api](https://github.com/wanderindev/postman-hr-rest-api)
-repository:
-```sh
-git clone https://github.com/wanderindev/postman-hr-rest-api.git
-``` 
-Open Postman and import `hr-rest-api.json` and `hr-rest-api-environment.json`.
-
-Click on Runner.
-
-In the window that pops open, select the `hr-rest-api` collection and the `hr-rest-api`
-environment.
-
-Click on Run.
-
-## Deployment
-Modify `rest/Dockerfile_prod`, adding the correct values for the environment variables.
-
-Build the container image and push to Docker Hub:
-```sh
-cd rest
-docker build -t wanderindev/hr-rest -f Dockerfile_prod .
-docker push wanderindev/hr-rest
-``` 
- 
- Go to the [do-managed-kubernetes](https://github.com/wanderindev/do-managed-kubernetes) 
- repository and re-deploy the pod.
- ```sh
-kubectl delete deployment hr-rest
-kubectl apply -f ./sites/hr-rest.yml
-``` 
 
  ## Author
 
