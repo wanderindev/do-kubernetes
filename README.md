@@ -106,6 +106,51 @@ kubectl --namespace=default get pods -l "app=external-dns,release=external-dns" 
 ```
 Refer to [this source](https://www.digitalocean.com/community/tutorials/how-to-automatically-manage-dns-records-from-digitalocean-kubernetes-using-externaldns)
 for more information.
+### Setup cluster monitoring
+Install the `prometheus-operator` chart:
+```sh
+helm install --namespace monitoring --name doks-cluster-monitoring -f ./monitoring/values.yml stable/prometheus-operator
+```
+Check that all pods (6 in total) are ready:
+```sh
+kubectl --namespace monitoring get pods -l "release=doks-cluster-monitoring"
+
+NAME                                                          READY   STATUS    RESTARTS   AGE
+doks-cluster-monitoring-grafana-7b775d756-m8rxj               2/2     Running   0          3m9s
+doks-cluster-monitoring-kube-state-metrics-85456956d7-st49f   1/1     Running   0          3m9s
+doks-cluster-monitoring-pr-operator-6685fdb84-4xk4m           1/1     Running   0          3m9s
+doks-cluster-monitoring-prometheus-node-exporter-tw7d7        1/1     Running   0          3m9s
+doks-cluster-monitoring-prometheus-node-exporter-v7m4q        1/1     Running   0          3m9s
+```
+Create a port-forwarding tunnel for the Grafana service:
+```sh
+kubectl port-forward -n monitoring svc/doks-cluster-monitoring-grafana 8000:80
+
+Forwarding from 127.0.0.1:8000 -> 3000
+Forwarding from [::1]:8000 -> 3000
+```
+And access it at `http://localhost:8000`. The username is `admin` and the password is in line 16 of `monitoring/values.yml`.  When done with Grafana, close the tunnel with `CTRL-C`.
+
+Create a port-forwarding tunnel for the Prometheus service:
+```sh
+kubectl port-forward -n monitoring svc/doks-cluster-monitoring-pr-prometheus 9090:9090
+
+Forwarding from 127.0.0.1:9090 -> 9090
+Forwarding from [::1]:9090 -> 9090
+```
+And access it at `http://localhost:9090`.
+
+Create a port-forwarding tunnel for the Alertmanager service:
+```sh
+kubectl port-forward -n monitoring svc/doks-cluster-monitoring-pr-alertmanager 9093:9093
+
+Forwarding from 127.0.0.1:9093 -> 9093
+Forwarding from [::1]:9093 -> 9093
+```
+And access it at `http://localhost:9093`.
+
+Refer to [this source](https://www.digitalocean.com/community/tutorials/how-to-set-up-digitalocean-kubernetes-cluster-monitoring-with-helm-and-prometheus-operator)
+for more information.
 ### Deploy PostgreSQL
 Modify, if needed, the `./postgresql/values-sample.yml` and install the PostgreSQL chart:
 ```sh
