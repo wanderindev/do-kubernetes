@@ -244,7 +244,7 @@ master:
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#taints-and-tolerations-beta-feature
-  nodeSelector: {type: "db"}
+  nodeSelector: {beta.kubernetes.io/instance-type: "s-2vcpu-4gb"}
   affinity: {}
   tolerations: []
   podLabels: {}

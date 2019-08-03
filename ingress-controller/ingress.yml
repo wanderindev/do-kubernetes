@@ -8,20 +8,18 @@ metadata:
 spec:
   tls:
   - hosts:
-    - adgseguros.com.pa
-    - blog.adgseguros.com.pa
-    - fb.adgseguros.com.pa
-    - promos.adgseguros.com.pa
-    - www.adgseguros.com.pa
+    # - adgseguros.com.pa
+    # - blog.adgseguros.com.pa
+    # - fb.adgseguros.com.pa
+    # - promos.adgseguros.com.pa
+    # - www.adgseguros.com.pa
     - anafeliu.com
     - www.anafeliu.com
     - felaro.org
     - www.felaro.org
     - feliu.io
-    - hr.feliu.io
     - www.feliu.io
     - panamaincontext.com
-    - blog.panamaincontext.com
     - www.panamaincontext.com
     - uslpanama.com
     - www.uslpanama.com
@@ -29,39 +27,38 @@ spec:
     - www.wallcouture.com.pa
     - wanderin.dev
     - www.wanderin.dev
-    - blog.wanderin.dev
     secretName: letsencrypt-prod
   rules:
-  - host: adgseguros.com.pa
-    http:
-      paths:
-        - backend:
-            serviceName: adg-web
-            servicePort: 80
-  - host: blog.adgseguros.com.pa
-    http:
-      paths:
-      - backend:
-          serviceName: adgblog-wordpress
-          servicePort: 80
-  - host: fb.adgseguros.com.pa
-    http:
-      paths:
-      - backend:
-          serviceName: adg-feedback
-          servicePort: 80
-  - host: promos.adgseguros.com.pa
-    http:
-      paths:
-      - backend:
-          serviceName: adgpromos-wordpress
-          servicePort: 80
-  - host: www.adgseguros.com.pa
-    http:
-      paths:
-        - backend:
-            serviceName: adg-web
-            servicePort: 80
+  # - host: adgseguros.com.pa
+  #   http:
+  #     paths:
+  #       - backend:
+  #           serviceName: adg-web
+  #           servicePort: 80
+  # - host: blog.adgseguros.com.pa
+  #   http:
+  #     paths:
+  #     - backend:
+  #         serviceName: adgblog-wordpress
+  #         servicePort: 80
+  # - host: fb.adgseguros.com.pa
+  #   http:
+  #     paths:
+  #     - backend:
+  #         serviceName: adg-feedback
+  #         servicePort: 80
+  # - host: promos.adgseguros.com.pa
+  #   http:
+  #     paths:
+  #     - backend:
+  #         serviceName: adgpromos-wordpress
+  #         servicePort: 80
+  # - host: www.adgseguros.com.pa
+  #   http:
+  #     paths:
+  #       - backend:
+  #           serviceName: adg-web
+  #           servicePort: 80
   - host: anafeliu.com
     http:
       paths:
@@ -92,12 +89,6 @@ spec:
       - backend:
           serviceName: feliuio-web
           servicePort: 80
-  - host: hr.feliu.io
-    http:
-      paths:
-      - backend:
-          serviceName: hr-rest
-          servicePort: 80
   - host: www.feliu.io
     http:
       paths:
@@ -109,12 +100,6 @@ spec:
       paths:
       - backend:
           serviceName: pic-web
-          servicePort: 80
-  - host: blog.panamaincontext.com
-    http:
-      paths:
-      - backend:
-          serviceName: pic-wordpress
           servicePort: 80
   - host: www.panamaincontext.com
     http:
@@ -151,12 +136,6 @@ spec:
       paths:
       - backend:
           serviceName: wander-web
-          servicePort: 80
-  - host: blog.wanderin.dev
-    http:
-      paths:
-      - backend:
-          serviceName: wander-wordpress
           servicePort: 80
   - host: www.wanderin.dev
     http:

@@ -29,4 +29,4 @@ spec:
         ports:
         - containerPort: 80
       nodeSelector:
-        type: "worker"
+        beta.kubernetes.io/instance-type: "s-1vcpu-2gb"

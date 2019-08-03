@@ -27,9 +27,9 @@ cd do-managed-kubernetes
 Fom the DigitalOcean dashboard, go to Kubernetes and create a cluster with 
 two node pools. 
 
-One pool will be for the database payloads and will have one node.
+One pool will be for the database payloads and will have one node with specs: standard / 2 vcpu / 4GB.
 
-The other pool will be for the workers and will have two nodes.
+The other pool will be for the workers and will have two nodes with specs: standard / 1 vcpu / 2GB.
 
 Download the cluster configuration file and place it in the repository root.  Rename
 it config.yml.
@@ -46,24 +46,6 @@ And paste at the end:
 export KUBECONFIG="/mnt/c/Users/jfeli/version-control/do-managed-kubernetes/config.yml"
 ```
 
-### Add labels to the nodes
-List the nodes in the cluster:
-```sh
-kubectl get nodes
-```
-The output will be similar to this:
-```sh
-NAME                    STATUS   ROLES    AGE   VERSION
-wid-db-jatk             Ready    <none>   35d   v1.14.1
-wid-workers-2cpu-xzb4   Ready    <none>   14d   v1.14.1
-wid-workers-2cpu-xmri   Ready    <none>   14d   v1.14.1
-```
-Add labels:
-```sh
-kubectl label nodes wid-db-jatk type=db
-kubectl label nodes wid-workers-2cpu-xzb4 type=worker
-kubectl label nodes wid-workers-2cpu-xmri type=worker
-```
 ### Deploying pods and services
 Deploy all pods and associated services:
 ```sh
@@ -74,25 +56,29 @@ Or deploy individual pods and services, for instance:
 kubectl apply -f ./sites/anafeliu-web.yml
 ```
 ### Deploy an Nginx ingress controller and cert-manager
-Create mandatory resources and load balancer:
+Install Tiller in the cluster:
 ```sh
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.24.1/deploy/mandatory.yaml
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.24.1/deploy/provider/cloud-generic.yaml
+kubectl -n kube-system create serviceaccount tiller
+kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+helm init --service-account tiller
+```
+Install the Nginx Ingress Controller, setting the `controller.publishService.enabled` parameter to `true`:
+```sh
+helm install stable/nginx-ingress --name nginx-ingress --set controller.publishService.enabled=true
+```
+A load balancer will be created.  Check if its available with:
+```sh
+kubectl get services -o wide -w nginx-ingress-controller
 ```
 Create a cert-manager custom resource definition and add label to the kube-system namespace: 
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.8/deploy/manifests/00-crds.yaml
 kubectl label namespace kube-system certmanager.k8s.io/disable-validation="true"
 ```
-Install Tiller in the cluster
-```sh
-kubectl -n kube-system create serviceaccount tiller
-kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
-helm init --service-account tiller
-```
 Install cert-manager:
 ```sh
-helm install --name cert-manager --namespace kube-system jetstack/cert-manager --version v0.8.0
+helm repo add jetstack https://charts.jetstack.io
+helm install --name cert-manager --namespace cert-manager jetstack/cert-manager
 ```
 Create a certificate issuer:
 ```sh
@@ -102,7 +88,23 @@ Create the ingress resource:
 ```sh
 kubectl apply -f ./ingress-controller/ingress.yml
 ```
-Refer to [this source](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-with-cert-manager-on-digitalocean-kubernetes)
+Wait a few minutes for the certificates to get issued.  Check progress with:
+```sh
+kubectl describe certificate letsencrypt-prod
+```
+Refer to [this source](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm)
+for more information.
+### Setup ExternalDNS 
+In the DigitalOcean dashboard, create an Api token and add it to `./ingress-controller/externaldns-values.yml`
+Install ExternalDNS:
+```sh
+helm install stable/external-dns --name external-dns -f ./ingress-controller/externaldns-values.yml
+```
+Verify that ExternalDNS is ready:
+```sh
+kubectl --namespace=default get pods -l "app=external-dns,release=external-dns" -w
+```
+Refer to [this source](https://www.digitalocean.com/community/tutorials/how-to-automatically-manage-dns-records-from-digitalocean-kubernetes-using-externaldns)
 for more information.
 ### Deploy PostgreSQL
 Modify, if needed, the `./postgresql/values-sample.yml` and install the PostgreSQL chart:

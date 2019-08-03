@@ -56,7 +56,7 @@ extraInitContainers: |
 
 ## Node selector
 ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
-nodeSelector: {type: "db"}
+nodeSelector: {beta.kubernetes.io/instance-type: "s-2vcpu-4gb"}
 
 ## Tolerations for pod assignment
 ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/

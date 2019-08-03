@@ -50,4 +50,4 @@ persistence:
 ## Node labels for pod assignment
 ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
 ##
-nodeSelector: {type: "blog"}
+nodeSelector: {beta.kubernetes.io/instance-type: "s-1vcpu-2gb"}
