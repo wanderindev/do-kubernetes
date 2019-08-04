@@ -27,6 +27,7 @@ spec:
     - www.wallcouture.com.pa
     - wanderin.dev
     - www.wanderin.dev
+    - fc-backend.wanderin.dev
     secretName: letsencrypt-prod
   rules:
   # - host: adgseguros.com.pa
@@ -142,4 +143,10 @@ spec:
       paths:
       - backend:
           serviceName: wander-web
+          servicePort: 80
+  - host: fc-backend.wanderin.dev
+    http:
+      paths:
+      - backend:
+          serviceName: fc-backend
           servicePort: 80

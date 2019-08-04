@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fc-backend
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: fc-backend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fc-backend
+spec:
+  selector:
+    matchLabels:
+      app: fc-backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fc-backend
+    spec:
+      containers:
+      - name: fc-backend
+        image: wanderindev/fc-backend:latest
+        ports:
+        - containerPort: 80
+      nodeSelector:
+        beta.kubernetes.io/instance-type: "s-1vcpu-2gb"
