@@ -8,11 +8,6 @@ metadata:
 spec:
   tls:
   - hosts:
-    # - adgseguros.com.pa
-    # - blog.adgseguros.com.pa
-    # - fb.adgseguros.com.pa
-    # - promos.adgseguros.com.pa
-    # - www.adgseguros.com.pa
     - anafeliu.com
     - www.anafeliu.com
     - felaro.org
@@ -28,38 +23,9 @@ spec:
     - wanderin.dev
     - www.wanderin.dev
     - fc-backend.wanderin.dev
+    - fc-frontend.wanderin.dev
     secretName: letsencrypt-prod
   rules:
-  # - host: adgseguros.com.pa
-  #   http:
-  #     paths:
-  #       - backend:
-  #           serviceName: adg-web
-  #           servicePort: 80
-  # - host: blog.adgseguros.com.pa
-  #   http:
-  #     paths:
-  #     - backend:
-  #         serviceName: adgblog-wordpress
-  #         servicePort: 80
-  # - host: fb.adgseguros.com.pa
-  #   http:
-  #     paths:
-  #     - backend:
-  #         serviceName: adg-feedback
-  #         servicePort: 80
-  # - host: promos.adgseguros.com.pa
-  #   http:
-  #     paths:
-  #     - backend:
-  #         serviceName: adgpromos-wordpress
-  #         servicePort: 80
-  # - host: www.adgseguros.com.pa
-  #   http:
-  #     paths:
-  #       - backend:
-  #           serviceName: adg-web
-  #           servicePort: 80
   - host: anafeliu.com
     http:
       paths:
@@ -149,4 +115,10 @@ spec:
       paths:
       - backend:
           serviceName: fc-backend
+          servicePort: 80
+  - host: fc-frontend.wanderin.dev
+    http:
+      paths:
+      - backend:
+          serviceName: fc-frontend
           servicePort: 80

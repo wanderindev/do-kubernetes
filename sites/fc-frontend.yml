@@ -1,31 +1,31 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fc-backend
+  name: fc-frontend
 spec:
   ports:
   - port: 80
     targetPort: 80
   selector:
-    app: fc-backend
+    app: fc-frontend
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fc-backend
+  name: fc-frontend
 spec:
   selector:
     matchLabels:
-      app: fc-backend
+      app: fc-frontend
   replicas: 2
   template:
     metadata:
       labels:
-        app: fc-backend
+        app: fc-frontend
     spec:
       containers:
-      - name: fc-backend
-        image: wanderindev/fc-backend:latest
+      - name: fc-frontend
+        image: wanderindev/fc-frontend:latest
         ports:
         - containerPort: 80
       nodeSelector:
