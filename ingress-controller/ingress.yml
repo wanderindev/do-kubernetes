@@ -14,16 +14,15 @@ spec:
     - www.felaro.org
     - feliu.io
     - www.feliu.io
+    - fc-backend.feliu.io
+    - fc-frontend.feliu.io
     - panamaincontext.com
     - www.panamaincontext.com
     - uslpanama.com
     - www.uslpanama.com
     - wallcouture.com.pa
     - www.wallcouture.com.pa
-    - wanderin.dev
-    - www.wanderin.dev
-    - fc-backend.wanderin.dev
-    - fc-frontend.wanderin.dev
+
     secretName: letsencrypt-prod
   rules:
   - host: anafeliu.com
@@ -62,6 +61,18 @@ spec:
       - backend:
           serviceName: feliuio-web
           servicePort: 80
+  - host: fc-backend.feliu.io
+    http:
+      paths:
+      - backend:
+          serviceName: fc-backend
+          servicePort: 80
+  - host: fc-frontend.feliu.io
+    http:
+      paths:
+      - backend:
+          serviceName: fc-frontend
+          servicePort: 80
   - host: panamaincontext.com
     http:
       paths:
@@ -97,28 +108,4 @@ spec:
       paths:
       - backend:
           serviceName: wallcouture-web
-          servicePort: 80
-  - host: wanderin.dev
-    http:
-      paths:
-      - backend:
-          serviceName: wander-web
-          servicePort: 80
-  - host: www.wanderin.dev
-    http:
-      paths:
-      - backend:
-          serviceName: wander-web
-          servicePort: 80
-  - host: fc-backend.wanderin.dev
-    http:
-      paths:
-      - backend:
-          serviceName: fc-backend
-          servicePort: 80
-  - host: fc-frontend.wanderin.dev
-    http:
-      paths:
-      - backend:
-          serviceName: fc-frontend
           servicePort: 80
