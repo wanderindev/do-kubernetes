@@ -16,8 +16,6 @@ spec:
     - www.feliu.io
     - fc-backend.feliu.io
     - fc-frontend.feliu.io
-    - panamaincontext.com
-    - www.panamaincontext.com
     - uslpanama.com
     - www.uslpanama.com
     - wallcouture.com.pa
@@ -72,18 +70,6 @@ spec:
       paths:
       - backend:
           serviceName: fc-frontend
-          servicePort: 80
-  - host: panamaincontext.com
-    http:
-      paths:
-      - backend:
-          serviceName: pic-web
-          servicePort: 80
-  - host: www.panamaincontext.com
-    http:
-      paths:
-      - backend:
-          serviceName: pic-web
           servicePort: 80
   - host: uslpanama.com
     http:
