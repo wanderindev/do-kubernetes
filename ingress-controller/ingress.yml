@@ -20,6 +20,8 @@ spec:
     - www.uslpanama.com
     - wallcouture.com.pa
     - www.wallcouture.com.pa
+    - atelierm.store
+    - atelierm.store
 
     secretName: letsencrypt-prod
   rules:
@@ -94,4 +96,16 @@ spec:
       paths:
       - backend:
           serviceName: wallcouture-web
+          servicePort: 80
+  - host: atelierm.store
+    http:
+      paths:
+      - backend:
+          serviceName: atelier-web
+          servicePort: 80
+  - host: www.atelierm.store
+    http:
+      paths:
+      - backend:
+          serviceName: atelier-web
           servicePort: 80
