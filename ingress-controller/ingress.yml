@@ -14,8 +14,9 @@ spec:
     - www.felaro.org
     - feliu.io
     - www.feliu.io
-    - fc-backend.feliu.io
-    - fc-frontend.feliu.io
+    - calcfina.com
+    - www.calcfina.com
+    - api.calcfina.com
     - uslpanama.com
     - www.uslpanama.com
     - wallcouture.com.pa
@@ -61,17 +62,23 @@ spec:
       - backend:
           serviceName: feliuio-web
           servicePort: 80
-  - host: fc-backend.feliu.io
+  - host: api.calcfina.com
     http:
       paths:
       - backend:
-          serviceName: fc-backend
+          serviceName: api-calcfina
           servicePort: 80
-  - host: fc-frontend.feliu.io
+  - host: calcfina.com
     http:
       paths:
       - backend:
-          serviceName: fc-frontend
+          serviceName: calcfina-web
+          servicePort: 80
+  - host: www.calcfina.com
+    http:
+      paths:
+      - backend:
+          serviceName: calcfina-web
           servicePort: 80
   - host: uslpanama.com
     http:
