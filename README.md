@@ -15,7 +15,13 @@
   </a>
 </p>
 
->Collection of yaml files for configuring our Kubernetes cluster.
+## About
+
+This repository contains a series of YML files that I used to configure all artifacts and payloads that run on my DigitalOcean managed Kubernetes cluster. 
+
+In this README, I explained how I set up the cluster and share the commands I most frequently use to manage it.
+
+At the end of the README, I list references to useful DigitalOcean documentation.
 
 ## How to use
 ### Clone the repository
