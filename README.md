@@ -23,34 +23,51 @@ In this README, I explained how I set up the cluster and share the commands I mo
 
 At the end of the README, I list references to useful DigitalOcean documentation.
 
-## How to use
-### Clone the repository
+## Install
+To use the project in your development machine, clone it, and go to the project's root:
 ```sh
 git clone https://github.com/wanderindev/do-managed-kubernetes.git
 cd do-managed-kubernetes
 ```
-### Create the cluster and add nodes
-Fom the DigitalOcean dashboard, go to Kubernetes and create a cluster with 
-two node pools. 
 
-One pool will be for the database payloads and will have one node with specs: standard / 2 vcpu / 4GB.
+### Create a cluster
 
-The other pool will be for the workers and will have two nodes with specs: standard / 1 vcpu / 2GB.
+Before you can use this repository contents, you must have a Kubernetes cluster running on DigitalOcean.  You can create it following these simple steps:
 
-Download the cluster configuration file and place it in the repository root.  Rename
-it config.yml.
+1. Login to your DigitalOcean account.
+2. Click on **Create > Kubernetes** in the top right.
+3. Select the region closest to your target audience.
+4. In the **"Choose cluster capacity"** section:
+   -  Enter a pool name or leave the default.
+   -  Select the number of nodes. I've used 2 for almost two years without any issues but choose something that makes sense for your use case.  You can always add or delete nodes as needed later.
+   -  Select the node plan.  I use the 2.5 GB RAM / 2 vCPUs
+5. Modify the cluster's name or leave the default.
+6. Click **Create Cluster**.  Your new cluster will be ready in about 4 minutes. You will get redirected to a **"Getting Started"** page.
 
-Make sure the KUBECONFIG environment variable points to the config.yml file.
+### Install management tools
 
-Open the .profile file:
+To manage your cluster, you will need ```kubectl``` installed in your terminal.  Visit [this link](https://kubernetes.io/docs/tasks/tools/install-kubectl/) for instructions on how to install it.
+
+### Download the config file
+
+Your cluster comes with a configuration file.  You need to download it and place it on the root of the project.  This file allows you to connect to the cluster and issue commands with ```kubectl```.
+
+On the Getting Started page, go to step 3, and click on **download the cluster configuration file**.  Place the file in the root of the project and rename it ```config.yml```.
+
+Make sure you keep this file out of version control.  Anyone with access to the file contents can connect to your cluster.  Before going any further, add ```config.yml``` to your ```.gitignore``` file.
+
+Finally, you have to make sure there's a KUBECONFIG environment variable pointing to the config.yml file.  If you use Ubuntu, like me, you can accomplish this by opening the ```.profile``` file:
+
 ```sh
 sudo vi ~/.profile
 ```
-And paste at the end:
+
+And pasting at the end:
 ```sh
 # set environment variable with path to kubectl config file
 export KUBECONFIG="/mnt/c/Users/jfeli/version-control/do-managed-kubernetes/config.yml"
 ```
+making sure you replace the value with the path to your ```config.yml``` file.
 
 ### Deploying pods and services
 Deploy all pods and associated services:
