@@ -48,6 +48,8 @@ Before you can use this repository contents, you must have a Kubernetes cluster 
 
 To manage your cluster, you will need ```kubectl``` installed in your terminal.  Visit [this link](https://kubernetes.io/docs/tasks/tools/install-kubectl/) for instructions on how to install it.
 
+You will also need the Helm package manager for Kubernetes.  Visit [this link](https://helm.sh/docs/intro/install/) for installation instructions.
+
 ### Download the config file
 
 Your cluster comes with a configuration file.  You need to download it and place it on the root of the project.  This file allows you to connect to the cluster and issue commands with ```kubectl```.
@@ -68,6 +70,18 @@ And pasting at the end:
 export KUBECONFIG="/mnt/c/Users/jfeli/version-control/do-managed-kubernetes/config.yml"
 ```
 making sure you replace the value with the path to your ```config.yml``` file.
+
+Try connecting to the cluster to make sure everything is all right:
+```sh
+kubectl get nodes
+```
+
+You should see something like this:
+```sh
+NAME                 STATUS   ROLES    AGE   VERSION
+workers-pool-31ety   Ready    <none>   14h   v1.19.3
+workers-pool-2a7xn   Ready    <none>   14h   v1.19.3
+```
 
 ### Deploying pods and services
 Deploy all pods and associated services:
