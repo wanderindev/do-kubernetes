@@ -52,11 +52,11 @@ To manage your cluster, you will need ```kubectl``` installed in your terminal. 
 
 Your cluster comes with a configuration file.  You need to download it and place it on the root of the project.  This file allows you to connect to the cluster and issue commands with ```kubectl```.
 
-On the Getting Started page, go to step 3, and click on **download the cluster configuration file**.  Place the file in the root of the project and rename it ```config.yml```.
+On the **"Getting Started"** page, go to step 3, and click on **download the cluster configuration file**.  Place the file in the root of the project and rename it ```config.yml```.
 
 Make sure you keep this file out of version control.  Anyone with access to the file contents can connect to your cluster.  Before going any further, add ```config.yml``` to your ```.gitignore``` file.
 
-Finally, you have to make sure there's a KUBECONFIG environment variable pointing to the config.yml file.  If you use Ubuntu, like me, you can accomplish this by opening the ```.profile``` file:
+Finally, you have to make sure there's a KUBECONFIG environment variable pointing to the ```config.yml``` file.  If you use Ubuntu, like me, you can accomplish this by opening the ```.profile``` file:
 
 ```sh
 sudo vi ~/.profile
