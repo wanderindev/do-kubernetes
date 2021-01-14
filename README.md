@@ -24,7 +24,9 @@ In this README, I explained how I set up the cluster and share the commands I mo
 At the end of the README, I list references to useful DigitalOcean documentation.
 
 ## Install
+
 To use the project in your development machine, clone it, and go to the project's root:
+
 ```sh
 git clone https://github.com/wanderindev/do-managed-kubernetes.git
 cd do-managed-kubernetes
@@ -65,6 +67,7 @@ sudo vi ~/.profile
 ```
 
 And pasting at the end:
+
 ```sh
 # set environment variable with path to kubectl config file
 export KUBECONFIG="/mnt/c/Users/jfeli/version-control/do-managed-kubernetes/config.yml"
@@ -72,15 +75,57 @@ export KUBECONFIG="/mnt/c/Users/jfeli/version-control/do-managed-kubernetes/conf
 making sure you replace the value with the path to your ```config.yml``` file.
 
 Try connecting to the cluster to make sure everything is all right:
+
 ```sh
 kubectl get nodes
 ```
 
 You should see something like this:
+
 ```sh
 NAME                 STATUS   ROLES    AGE   VERSION
 workers-pool-31ety   Ready    <none>   14h   v1.19.3
 workers-pool-2a7xn   Ready    <none>   14h   v1.19.3
+```
+
+## Set up an Ingress Controller
+
+A Kubernetes Ingress exposes HTTP / HTTPS routes from outside the cluster to services within the cluster.  The rules defined in the Ingress resource control the traffic routing.
+
+The easiest way to set up an Ingress Controller for your cluster is to use the one-click-app-install available in the DigitalOcean marketplace. Note that adding the Ingress will create a load balancer, which will cost $10 per month. 
+
+To add an Ingress controller, login to your DigitalOcean account and follow these steps:
+
+1. Visit the [NGINX Ingress Controller app](https://cloud.digitalocean.com/marketplace/5dcc8254e2339e33d74decd7?i=eedacf).  
+2. Click Install App
+3. Select your cluster.
+
+You will be redirected to your cluster's overview page.  The installation will take a few minutes.  Once ready, check to make sure it is running:
+
+```sh
+kubectl get pods --all-namespaces -l app.kubernetes.io/name=ingress-nginx
+```
+
+You should see something like this:
+
+```sh
+NAMESPACE       NAME                                        READY   STATUS    RESTARTS   AGE
+ingress-nginx   nginx-ingress-controller-7fb85bc8bb-4s2sl   1/1     Running   0          2m
+```
+
+And you can check the IP for the load balancer by running:
+
+```sh
+kubectl get svc -n ingress-nginx
+```
+
+You should see something like this:
+
+```sh
+NAME                                               TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)                      AGE
+nginx-ingress-ingress-nginx-controller             LoadBalancer   10.46.26.107    43.35.119.37   80:30068/TCP,443:31110/TCP   3m
+nginx-ingress-ingress-nginx-controller-admission   ClusterIP      10.46.75.151    <none>         443/TCP                      3m
+nginx-ingress-ingress-nginx-controller-metrics     ClusterIP      10.46.33.11     <none>         9913/TCP                     3m
 ```
 
 ### Deploying pods and services
