@@ -15,6 +15,12 @@
   </a>
 </p>
 
+## Important Note / Disclaimer  
+
+A lot has changed in Kubernetes since I created this README two years ago.  I am in the process of updating my cluster from version 1.14 to 1.19.  As I do that, I will also be updating this document.  
+
+Right now, I can only work 30 minutes a day on this.  I expect to be done by January 17th.  In the meantime, please don't use this repository since the information in it might not be accurate.
+
 ## About
 
 This repository contains a series of YML files that I used to configure all artifacts and payloads that run on my DigitalOcean managed Kubernetes cluster. 
