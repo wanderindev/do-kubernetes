@@ -149,8 +149,33 @@ nginx-ingress-ingress-nginx-controller             LoadBalancer   10.46.26.107  
 nginx-ingress-ingress-nginx-controller-admission   ClusterIP      10.46.75.151    <none>         443/TCP                      3m
 nginx-ingress-ingress-nginx-controller-metrics     ClusterIP      10.46.33.11     <none>         9913/TCP                     3m
 ```
-
 Note the external IP since you will need it later.
+
+We need to add some annotations to our load balancer to allow Pod to Pod communication within the DigitalOcean Kubernetes cluster.  The file ingress-controller/load_balancer.yml
+has been already annotated with a reference to a hostname, ```lb.feliu.io```:
+
+```sh
+metadata:
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: 'true'
+    service.beta.kubernetes.io/do-loadbalancer-hostname: "lb.feliu.io"
+```
+
+Where ```feliu.io``` is a domain I already own and that its is managed by DigitalOcean.  Replace with a domain of your own.
+
+Apply the changes to the load balancer by running:
+
+```sh
+kubectl apply -f ingress-controller/load_balancer.yml
+```
+
+```sh
+Output
+
+service/ingress-nginx-controller configured
+```
+
+Finally, go to the **Networking** section in your DigitalOcean dashboard and add an A record for the subdomain.domain you used for the annotation (in my case lb.feliu.io) pointing to the load balancer's external IP.
 
 ## Installing Cert-Manager
 
@@ -181,7 +206,33 @@ cert-manager-webhook-845d1578bf-nqqfw      1/1     Running   0          2m9s
 
 The next step is to add to the cluster a certificate Issuer.  The Issuer defines the authority which will sign your certificates.   We will use Let's Encrypt.
 
-The file ```ingress-controller/issuer.yml``` contains our Issuer.  We can add it to the cluster by running:
+The file ```ingress-controller/issuer.yml``` contains our Issuer.  It looks like this:
+
+```sh
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+  namespace: cert-manager
+spec:
+  acme:
+    # The ACME server URL
+    server: https://acme-v02.api.letsencrypt.org/directory
+    # Email address used for ACME registration
+    email: javier@wanderin.dev
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    # Enable the HTTP-01 challenge provider
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+```
+
+In it, we define a ClusterIssuer named ```letsencrypt-prod``` which will use the Let's Encrypt server to generate certificates registered to my email.  The acount's private key will be store in the Kubernetes secret ```letsencrypt-prod```.
+
+You can add it to the cluster by running:
 
 ```sh
 kubectl create -f ./ingress-controller/issuer.yml
