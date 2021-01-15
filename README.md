@@ -286,9 +286,14 @@ kubectl describe certificate letsencrypt-prod
 
 ## References
 
- [Tutorial: How to Set Up an Nginx Ingress with Cert-Manager on DigitalOcean Kubernetes](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-with-cert-manager-on-digitalocean-kubernetes)
+- [DigitalOcean Kubernetes screencast]()
+- [Documentation: ```kubeclt```](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+- [Documentation: cert-manager](https://cert-manager.io/docs/concepts/)
+- [Tutorial: How to Set Up an Nginx Ingress with Cert-Manager on DigitalOcean Kubernetes](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-with-cert-manager-on-digitalocean-kubernetes)
+- [Tutorial: How to Create, Edit, and Delete DNS Records](https://www.digitalocean.com/docs/networking/dns/how-to/manage-records/)
+- [Documentation: Kubernetes Managing Resources Guide](https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment)
 
- ## Author
+## Author
 
 👤 **Javier Feliu**
 
