@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: calcfina-web
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: calcfina-web
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calcfina-web
+spec:
+  selector:
+    matchLabels:
+      app: calcfina-web
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: calcfina-web
+    spec:
+      containers:
+      - name: calcfina-web
+        image: wanderindev/fc-frontend:latest
+        ports:
+        - containerPort: 80
+      nodeSelector:
+        beta.kubernetes.io/instance-type: "s-1vcpu-2gb"

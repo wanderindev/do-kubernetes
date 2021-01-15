@@ -86,9 +86,9 @@ Try connecting to the cluster to make sure everything is all right:
 kubectl get nodes
 ```
 
-You should see something like this:
-
 ```sh
+Output
+
 NAME                 STATUS   ROLES    AGE   VERSION
 workers-pool-31ety   Ready    <none>   14h   v1.19.3
 workers-pool-2a7xn   Ready    <none>   14h   v1.19.3
@@ -112,7 +112,7 @@ rules:
 
 Which says: "Route all traffic arriving at anafeliu.com to the port 80 of service anafeliu-web." You can have as many rules as necessary in your Ingress resource.
 
-The easiest way to set up an Ingress Controller for your cluster is to use the one-click-app-install available in the DigitalOcean marketplace.  Installing it will add a Pod to our nodes running Nginx that will route traffic according to the rules specified in our Ingress resource.
+The easiest way to set up an Ingress Controller for your cluster is to use the one-click-app-install available in the DigitalOcean marketplace.  Installing it will add a Pod running Nginx to your nodes that will route traffic according to the rules specified in our Ingress resource.
 
 Note that adding the Ingress will also create a load balancer, which will cost $10 per month.
 
@@ -128,9 +128,9 @@ You will be redirected to your cluster's overview page.  The installation will t
 kubectl get pods --all-namespaces -l app.kubernetes.io/name=ingress-nginx
 ```
 
-You should see something like this:
-
 ```sh
+Output
+
 NAMESPACE       NAME                                        READY   STATUS    RESTARTS   AGE
 ingress-nginx   nginx-ingress-controller-7fb85bc8bb-4s2sl   1/1     Running   0          2m
 ```
@@ -141,137 +141,147 @@ And you can check that the new load balancer is ready and what is its IP by runn
 kubectl get svc -n ingress-nginx
 ```
 
-You should see something like this:
-
 ```sh
+Output
+
 NAME                                               TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)                      AGE
 nginx-ingress-ingress-nginx-controller             LoadBalancer   10.46.26.107    43.35.119.37   80:30068/TCP,443:31110/TCP   3m
 nginx-ingress-ingress-nginx-controller-admission   ClusterIP      10.46.75.151    <none>         443/TCP                      3m
 nginx-ingress-ingress-nginx-controller-metrics     ClusterIP      10.46.33.11     <none>         9913/TCP                     3m
 ```
 
-### Deploying pods and services
-Deploy all pods and associated services:
+Note the external IP since you will need it later.
+
+## Installing Cert-Manager
+
+Cert-manager is a Kubernetes add-on that provisions TLS certificates from a certificate authority like Let's Encrypt.  Adding cert-manager to your cluster provides worry-free management of the TLS certificates' lifecycles for all your hosts.
+
+The first thing you need to do is install cert-manager by running:
+
 ```sh
-kubectl apply -f ./sites
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.16.1/cert-manager.yaml
 ```
-Or deploy individual pods and services, for instance:
+
+Once installed, check that the cert-manager pods are running:
+
 ```sh
-kubectl apply -f ./sites/anafeliu-web.yml
+kubectl get pods --namespace cert-manager
 ```
-### Deploy an Nginx ingress controller and cert-manager
-Install Tiller in the cluster:
+
 ```sh
-kubectl -n kube-system create serviceaccount tiller
-kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
-helm init --service-account tiller
+Output
+
+NAME                                      READY   STATUS    RESTARTS    AGE
+cert-manager-cainjector-fc6c5a17db-wbtt6   1/1     Running   0          2m10s
+cert-manager-d9937d4d7-xxv2z               1/1     Running   0          2m9s
+cert-manager-webhook-845d1578bf-nqqfw      1/1     Running   0          2m9s
 ```
-Install the Nginx Ingress Controller, setting the `controller.publishService.enabled` parameter to `true`:
-```sh
-helm install stable/nginx-ingress --name nginx-ingress --set controller.publishService.enabled=true
-```
-A load balancer will be created.  Check if its available with:
-```sh
-kubectl get services -o wide -w nginx-ingress-controller
-```
-Create a cert-manager custom resource definition and add label to the kube-system namespace: 
-```sh
-kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.8/deploy/manifests/00-crds.yaml
-kubectl label namespace kube-system certmanager.k8s.io/disable-validation="true"
-```
-Install cert-manager:
-```sh
-helm repo add jetstack https://charts.jetstack.io
-helm install --name cert-manager --namespace cert-manager jetstack/cert-manager
-```
-Create a certificate issuer:
+
+### Creating a certificate issuer
+
+The next step is to add to the cluster a certificate Issuer.  The Issuer defines the authority which will sign your certificates.   We will use Let's Encrypt.
+
+The file ```ingress-controller/issuer.yml``` contains our Issuer.  We can add it to the cluster by running:
+
 ```sh
 kubectl create -f ./ingress-controller/issuer.yml
 ```
-Create the ingress resource:
+
+```sh
+Output
+
+clusterissuer.cert-manager.io/letsencrypt-prod created
+```
+
+### Adding a ```tls``` section to our Ingress
+
+Cert-manager knows which certificates it needs to get by looking at the ```tls``` section in the Ingress resource, which, in our case, looks like this:
+
+```sh
+spec:
+  tls:
+  - hosts:
+    - anafeliu.com
+    - www.anafeliu.com
+    - felaro.org
+    - www.felaro.org
+    - feliu.io
+    - www.feliu.io
+    - calcfina.com
+    - www.calcfina.com
+    - api.calcfina.com
+    - uslpanama.com
+    - www.uslpanama.com
+    - wallcouture.com.pa
+    - www.wallcouture.com.pa
+
+    secretName: letsencrypt-prod
+```
+
+Cert-manager will take care of managing the certificates for all the hosts listed there.  The ```secretName``` will hold the TLS private key and issued certificates.
+
+### Pointing your hosts to the load balancer
+
+Before you apply the Ingress resource to your cluster, you need to modify the A records for all your hosts so they point to the load balancer's IP.  You can accomplish this from the Networking section in your **DigitalOcean dashboard**.
+
+### Adding Pods and Services for your hosts
+
+We also need to add to the cluster the Pods that contain your hosts' actual software and the associated Services.  The ```python``` and ```sites``` folders in this repository contain many yml files with Deployments and related Services.  
+
+A Deployment defines how to create a Pod with a specific workload and how many Pod replicas should be running in the cluster.
+
+You can add the Pods and Services for the hosts by running:
+
+```sh
+kubectl apply -f ./sites/anafeliu-web.yml
+kubectl apply -f ./sites/felaro-web.yml
+kubectl apply -f ./sites/feliuio-web.yml
+kubectl apply -f ./sites/calcfina-web.yml
+kubectl apply -f ./python/api-calcfina.yml
+kubectl apply -f ./sites/usl-web.yml
+kubectl apply -f ./sites/wallcouture-web.yml
+```
+
+```sh
+Output
+
+service/anafeliu-web created
+deployment.apps/anafeliu-web created
+service/felaro-web created
+deployment.apps/felaro-web created
+service/feliuio-web created
+deployment.apps/feliuio-web created
+service/calcfina-web created
+deployment.apps/calcfina-web created
+service/api-calcfina created
+deployment.apps/api-calcfina created
+service/usl-web created
+deployment.apps/usl-web created
+service/wallcouture-web created
+deployment.apps/wallcouture-web created
+```
+
+### Add the Ingress resource
+
+Finally, we can add the Ingress resource by running:
+
 ```sh
 kubectl apply -f ./ingress-controller/ingress.yml
 ```
+
+```sh
+Output
+
+Warning: networking.k8s.io/v1beta1 Ingress is deprecated in v1.19+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
+ingress.networking.k8s.io/wid-ingress created
+```
+
+Cert-manager will request the TLS certificates for all the hosts listed in the Ingress resource.  Also, all external traffic received for the hosts will be routed to the appropriate Service as defined in the Ingress resource.
+
 Wait a few minutes for the certificates to get issued.  Check progress with:
+
 ```sh
 kubectl describe certificate letsencrypt-prod
-```
-Refer to [this source](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm)
-for more information.
-### Setup ExternalDNS 
-In the DigitalOcean dashboard, create an Api token and add it to `./ingress-controller/externaldns-values.yml`
-Install ExternalDNS:
-```sh
-helm install stable/external-dns --name external-dns -f ./ingress-controller/externaldns-values.yml
-```
-Verify that ExternalDNS is ready:
-```sh
-kubectl --namespace=default get pods -l "app=external-dns,release=external-dns" -w
-```
-Refer to [this source](https://www.digitalocean.com/community/tutorials/how-to-automatically-manage-dns-records-from-digitalocean-kubernetes-using-externaldns)
-for more information.
-### Setup cluster monitoring
-Install the `prometheus-operator` chart:
-```sh
-helm install --namespace monitoring --name doks-cluster-monitoring -f ./monitoring/values.yml stable/prometheus-operator
-```
-Check that all pods (6 in total) are ready:
-```sh
-kubectl --namespace monitoring get pods -l "release=doks-cluster-monitoring"
-
-NAME                                                          READY   STATUS    RESTARTS   AGE
-doks-cluster-monitoring-grafana-7b775d756-m8rxj               2/2     Running   0          3m9s
-doks-cluster-monitoring-kube-state-metrics-85456956d7-st49f   1/1     Running   0          3m9s
-doks-cluster-monitoring-pr-operator-6685fdb84-4xk4m           1/1     Running   0          3m9s
-doks-cluster-monitoring-prometheus-node-exporter-tw7d7        1/1     Running   0          3m9s
-doks-cluster-monitoring-prometheus-node-exporter-v7m4q        1/1     Running   0          3m9s
-```
-Create a port-forwarding tunnel for the Grafana service:
-```sh
-kubectl port-forward -n monitoring svc/doks-cluster-monitoring-grafana 8000:80
-
-Forwarding from 127.0.0.1:8000 -> 3000
-Forwarding from [::1]:8000 -> 3000
-```
-And access it at `http://localhost:8000`. The username is `admin` and the password is in line 16 of `monitoring/values.yml`.  When done with Grafana, close the tunnel with `CTRL-C`.
-
-Create a port-forwarding tunnel for the Prometheus service:
-```sh
-kubectl port-forward -n monitoring svc/doks-cluster-monitoring-pr-prometheus 9090:9090
-
-Forwarding from 127.0.0.1:9090 -> 9090
-Forwarding from [::1]:9090 -> 9090
-```
-And access it at `http://localhost:9090`.
-
-Create a port-forwarding tunnel for the Alertmanager service:
-```sh
-kubectl port-forward -n monitoring svc/doks-cluster-monitoring-pr-alertmanager 9093:9093
-
-Forwarding from 127.0.0.1:9093 -> 9093
-Forwarding from [::1]:9093 -> 9093
-```
-And access it at `http://localhost:9093`.
-
-Refer to [this source](https://www.digitalocean.com/community/tutorials/how-to-set-up-digitalocean-kubernetes-cluster-monitoring-with-helm-and-prometheus-operator)
-for more information.
-### Deploy PostgreSQL
-Modify, if needed, the `./postgresql/values-sample.yml` and install the PostgreSQL chart:
-```sh
-helm install --name wid-pg -f ./postgresql/values-sample.yml stable/postgresql
-```
-Get the auto generated PostgreSQL password:
-```sh
-kubectl get secret --namespace default wid-pg-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode
-```
-### Deploy MySQL
-Modify, if needed, the `./mysql/values-sample.yml` and install the MySQL chart:
-```sh
-helm install --name wid-mysql -f ./values-sample.yml stable/mysql
-```
-Get the auto generated MySQL password:
-```sh
-kubectl get secret --namespace default wid-mysql -o jsonpath="{.data.mysql-root-password}" | base64 --decode; echo
 ```
 
 ## References
