@@ -17,7 +17,7 @@ spec:
   selector:
     matchLabels:
       app: anafeliu-web
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
