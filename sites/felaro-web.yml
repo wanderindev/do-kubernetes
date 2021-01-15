@@ -28,5 +28,3 @@ spec:
         image: wanderindev/felaro-web:latest
         ports:
         - containerPort: 80
-      nodeSelector:
-        beta.kubernetes.io/instance-type: "s-1vcpu-2gb"
