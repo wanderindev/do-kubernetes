@@ -274,6 +274,10 @@ Get the auto generated MySQL password:
 kubectl get secret --namespace default wid-mysql -o jsonpath="{.data.mysql-root-password}" | base64 --decode; echo
 ```
 
+## References
+
+ [Tutorial: How to Set Up an Nginx Ingress with Cert-Manager on DigitalOcean Kubernetes](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-with-cert-manager-on-digitalocean-kubernetes)
+
  ## Author
 
 👤 **Javier Feliu**
