@@ -98,7 +98,23 @@ workers-pool-2a7xn   Ready    <none>   14h   v1.19.3
 
 A Kubernetes Ingress exposes HTTP / HTTPS routes from outside the cluster to services within the cluster.  The rules defined in the Ingress resource control the traffic routing.
 
-The easiest way to set up an Ingress Controller for your cluster is to use the one-click-app-install available in the DigitalOcean marketplace. Note that adding the Ingress will create a load balancer, which will cost $10 per month. 
+The file ```ingress-controller/ingress.yml``` in this repository defines our Ingress resource.  If you look at the first rule, you see this:
+
+```sh
+rules:
+  - host: anafeliu.com
+    http:
+      paths:
+      - backend:
+          serviceName: anafeliu-web
+          servicePort: 80
+```
+
+Which says: "Route all traffic arriving at anafeliu.com to the port 80 of service anafeliu-web." You can have as many rules as necessary in your Ingress resource.
+
+The easiest way to set up an Ingress Controller for your cluster is to use the one-click-app-install available in the DigitalOcean marketplace.  Installing it will add a Pod to our nodes running Nginx that will route traffic according to the rules specified in our Ingress resource.
+
+Note that adding the Ingress will also create a load balancer, which will cost $10 per month.
 
 To add an Ingress controller, login to your DigitalOcean account and follow these steps:
 
@@ -106,7 +122,7 @@ To add an Ingress controller, login to your DigitalOcean account and follow thes
 2. Click Install App
 3. Select your cluster.
 
-You will be redirected to your cluster's overview page.  The installation will take a few minutes.  Once ready, check to make sure it is running:
+You will be redirected to your cluster's overview page.  The installation will take a few minutes.  Once ready, check to make sure the new pod it is running:
 
 ```sh
 kubectl get pods --all-namespaces -l app.kubernetes.io/name=ingress-nginx
@@ -119,7 +135,7 @@ NAMESPACE       NAME                                        READY   STATUS    RE
 ingress-nginx   nginx-ingress-controller-7fb85bc8bb-4s2sl   1/1     Running   0          2m
 ```
 
-And you can check the IP for the load balancer by running:
+And you can check that the new load balancer is ready and what is its IP by running:
 
 ```sh
 kubectl get svc -n ingress-nginx
