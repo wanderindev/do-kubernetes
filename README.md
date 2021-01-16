@@ -417,6 +417,102 @@ Wait a few minutes for the certificates to get issued.  Check progress with:
 kubectl describe certificate letsencrypt-prod
 ```
 
+```sh
+output
+
+Name:         letsencrypt-prod
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+API Version:  cert-manager.io/v1
+Kind:         Certificate
+Metadata:
+  Creation Timestamp:  2021-01-16T00:46:38Z
+  Generation:          1
+  Managed Fields:
+    API Version:  cert-manager.io/v1
+    Fields Type:  FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:ownerReferences:
+          .:
+          k:{"uid":"2639c261-e7d2-47ef-afa5-7f6ffbf8ca9b"}:
+            .:
+            f:apiVersion:
+            f:blockOwnerDeletion:
+            f:controller:
+            f:kind:
+            f:name:
+            f:uid:
+      f:spec:
+        .:
+        f:dnsNames:
+        f:issuerRef:
+          .:
+          f:group:
+          f:kind:
+          f:name:
+        f:privateKey:
+        f:secretName:
+      f:status:
+        .:
+        f:conditions:
+        f:notAfter:
+        f:notBefore:
+        f:renewalTime:
+        f:revision:
+    Manager:    controller
+    Operation:  Update
+    Time:       2021-01-16T01:44:30Z
+  Owner References:
+    API Version:           extensions/v1beta1
+    Block Owner Deletion:  true
+    Controller:            true
+    Kind:                  Ingress
+    Name:                  wid-ingress
+    UID:                   2639c261-e7d2-47ef-afa5-7f6ffbf8ca9b
+  Resource Version:        17717
+  Self Link:               /apis/cert-manager.io/v1/namespaces/default/certificates/letsencrypt-prod
+  UID:                     b02bcad7-22ca-4238-854d-8b95b16344e3
+Spec:
+  Dns Names:
+    anafeliu.com
+    www.anafeliu.com
+    felaro.org
+    www.felaro.org
+    feliu.io
+    www.feliu.io
+    calcfina.com
+    www.calcfina.com
+    api.calcfina.com
+    uslpanama.com
+    www.uslpanama.com
+    wallcouture.com.pa
+    www.wallcouture.com.pa
+  Issuer Ref:
+    Group:      cert-manager.io
+    Kind:       ClusterIssuer
+    Name:       letsencrypt-prod
+  Secret Name:  letsencrypt-prod
+Status:
+  Conditions:
+    Last Transition Time:  2021-01-16T01:44:30Z
+    Message:               Certificate is up to date and has not expired
+    Reason:                Ready
+    Status:                True
+    Type:                  Ready
+  Not After:               2021-04-16T00:44:30Z
+  Not Before:              2021-01-16T00:44:30Z
+  Renewal Time:            2021-03-17T00:44:30Z
+  Revision:                1
+Events:
+  Type    Reason   Age    From          Message
+  ----    ------   ----   ----          -------
+  Normal  Issuing  3m52s  cert-manager  The certificate has been successfully issued
+```
+
+
+
 ## References
 
 - [DigitalOcean Kubernetes screencast]()
