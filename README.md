@@ -101,13 +101,17 @@ A Kubernetes Ingress exposes HTTP / HTTPS routes from outside the cluster to ser
 The file ```ingress-controller/ingress.yml``` in this repository defines our Ingress resource.  If you look at the first rule, you see this:
 
 ```sh
-rules:
+  rules:
   - host: anafeliu.com
     http:
       paths:
-      - backend:
-          serviceName: anafeliu-web
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: anafeliu-web
+            port:
+              number: 80
 ```
 
 Which says: "Route all traffic arriving at anafeliu.com to the port 80 of service anafeliu-web." You can have as many rules as necessary in your Ingress resource.
@@ -131,8 +135,10 @@ kubectl get pods --all-namespaces -l app.kubernetes.io/name=ingress-nginx
 ```sh
 Output
 
-NAMESPACE       NAME                                        READY   STATUS    RESTARTS   AGE
-ingress-nginx   nginx-ingress-controller-7fb85bc8bb-4s2sl   1/1     Running   0          2m
+NAMESPACE       NAME                                        READY   STATUS      RESTARTS   AGE
+ingress-nginx   ingress-nginx-admission-create-chk64        0/1     Completed   0          2m47s
+ingress-nginx   ingress-nginx-admission-patch-trjmk         0/1     Completed   0          2m47s
+ingress-nginx   ingress-nginx-controller-56c75d774d-9nsd8   1/1     Running     0          2m49s
 ```
 
 And you can check that the new load balancer is ready and what is its IP by running:
@@ -144,14 +150,14 @@ kubectl get svc -n ingress-nginx
 ```sh
 Output
 
-NAME                                               TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)                      AGE
-nginx-ingress-ingress-nginx-controller             LoadBalancer   10.46.26.107    43.35.119.37   80:30068/TCP,443:31110/TCP   3m
-nginx-ingress-ingress-nginx-controller-admission   ClusterIP      10.46.75.151    <none>         443/TCP                      3m
-nginx-ingress-ingress-nginx-controller-metrics     ClusterIP      10.46.33.11     <none>         9913/TCP                     3m
+NAME                                 TYPE           CLUSTER-IP       EXTERNAL-IP       PORT(S)                      AGE
+ingress-nginx-controller             LoadBalancer   10.245.84.127    175.108.120.222   80:31646/TCP,443:31596/TCP   6m
+ingress-nginx-controller-admission   ClusterIP      10.245.146.170   <none>            443/TCP                      6m
 ```
+
 Note the external IP since you will need it later.
 
-We need to add some annotations to our load balancer to allow Pod to Pod communication within the DigitalOcean Kubernetes cluster.  The file ingress-controller/load_balancer.yml
+We need to add some annotations to our load balancer to allow Pod to Pod communication within the DigitalOcean Kubernetes cluster.  The file ```ingress-controller/load_balancer.yml```
 has been already annotated with a reference to a hostname, ```lb.feliu.io```:
 
 ```sh
@@ -175,7 +181,7 @@ Output
 service/ingress-nginx-controller configured
 ```
 
-Finally, go to the **Networking** section in your DigitalOcean dashboard and add an A record for the subdomain.domain you used for the annotation (in my case lb.feliu.io) pointing to the load balancer's external IP.
+Finally, go to the **Networking** section in your DigitalOcean dashboard and add an A record for the subdomain.domain you used for the annotation (in my case ```lb.feliu.io```) pointing to the load balancer's external IP.
 
 ## Installing Cert-Manager
 
@@ -184,7 +190,51 @@ Cert-manager is a Kubernetes add-on that provisions TLS certificates from a cert
 The first thing you need to do is install cert-manager by running:
 
 ```sh
-kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.16.1/cert-manager.yaml
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.1.0/cert-manager.yaml
+```
+
+```sh
+Output
+
+customresourcedefinition.apiextensions.k8s.io/certificaterequests.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/certificates.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/challenges.acme.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/clusterissuers.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/issuers.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/orders.acme.cert-manager.io created
+namespace/cert-manager created
+serviceaccount/cert-manager-cainjector created
+serviceaccount/cert-manager created
+serviceaccount/cert-manager-webhook created
+clusterrole.rbac.authorization.k8s.io/cert-manager-cainjector created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-issuers created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-clusterissuers created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-certificates created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-orders created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-challenges created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-ingress-shim created
+clusterrole.rbac.authorization.k8s.io/cert-manager-view created
+clusterrole.rbac.authorization.k8s.io/cert-manager-edit created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-cainjector created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-issuers created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-clusterissuers created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-certificates created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-orders created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-challenges created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-ingress-shim created
+role.rbac.authorization.k8s.io/cert-manager-cainjector:leaderelection created
+role.rbac.authorization.k8s.io/cert-manager:leaderelection created
+role.rbac.authorization.k8s.io/cert-manager-webhook:dynamic-serving created
+rolebinding.rbac.authorization.k8s.io/cert-manager-cainjector:leaderelection created
+rolebinding.rbac.authorization.k8s.io/cert-manager:leaderelection created
+rolebinding.rbac.authorization.k8s.io/cert-manager-webhook:dynamic-serving created
+service/cert-manager created
+service/cert-manager-webhook created
+deployment.apps/cert-manager-cainjector created
+deployment.apps/cert-manager created
+deployment.apps/cert-manager-webhook created
+mutatingwebhookconfiguration.admissionregistration.k8s.io/cert-manager-webhook created
+validatingwebhookconfiguration.admissionregistration.k8s.io/cert-manager-webhook created
 ```
 
 Once installed, check that the cert-manager pods are running:
@@ -209,7 +259,7 @@ The next step is to add to the cluster a certificate Issuer.  The Issuer defines
 The file ```ingress-controller/issuer.yml``` contains our Issuer.  It looks like this:
 
 ```sh
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
@@ -273,7 +323,7 @@ Cert-manager will take care of managing the certificates for all the hosts liste
 
 ### Pointing your hosts to the load balancer
 
-Before you apply the Ingress resource to your cluster, you need to modify the A records for all your hosts so they point to the load balancer's IP.  You can accomplish this from the Networking section in your **DigitalOcean dashboard**.
+Before you apply the Ingress resource to your cluster, you need to modify the A records for all your hosts so they point to the load balancer's IP.  You can accomplish this from the **Networking** section in your **DigitalOcean dashboard**.
 
 ### Adding Pods and Services for your hosts
 
@@ -312,6 +362,45 @@ service/wallcouture-web created
 deployment.apps/wallcouture-web created
 ```
 
+You can check that the Pods and Services were created, like so:
+
+```sh
+kubectl get pods
+```
+
+```sh
+Output
+
+NAME                              READY   STATUS    RESTARTS   AGE
+anafeliu-web-7ddb7f75bb-6xh2k     1/1     Running   0          76s
+api-calcfina-68dd859fcb-4v5mz     1/1     Running   0          43s
+api-calcfina-68dd859fcb-xcrmt     1/1     Running   0          43s
+calcfina-web-55f6679c8b-hngkb     1/1     Running   0          51s
+calcfina-web-55f6679c8b-rrjhq     1/1     Running   0          51s
+felaro-web-5bdf476664-kphrq       1/1     Running   0          66s
+feliuio-web-695b4dcbf8-lcn4s      1/1     Running   0          58s
+usl-web-77b979f75f-qbtmb          1/1     Running   0          35s
+wallcouture-web-fff96dcfb-88q59   1/1     Running   0          27s
+```
+
+```sh
+kubectl get svc
+```
+
+```sh
+Output
+
+NAME              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE
+anafeliu-web      ClusterIP   10.245.11.234    <none>        80/TCP    86s
+api-calcfina      ClusterIP   10.245.80.179    <none>        80/TCP    53s
+calcfina-web      ClusterIP   10.245.15.196    <none>        80/TCP    61s
+felaro-web        ClusterIP   10.245.125.206   <none>        80/TCP    76s
+feliuio-web       ClusterIP   10.245.195.59    <none>        80/TCP    68s
+kubernetes        ClusterIP   10.245.0.1       <none>        443/TCP   28m
+usl-web           ClusterIP   10.245.174.105   <none>        80/TCP    45s
+wallcouture-web   ClusterIP   10.245.224.25    <none>        80/TCP    37s
+```
+
 ### Add the Ingress resource
 
 Finally, we can add the Ingress resource by running:
@@ -323,7 +412,6 @@ kubectl apply -f ./ingress-controller/ingress.yml
 ```sh
 Output
 
-Warning: networking.k8s.io/v1beta1 Ingress is deprecated in v1.19+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
 ingress.networking.k8s.io/wid-ingress created
 ```
 
@@ -340,6 +428,7 @@ kubectl describe certificate letsencrypt-prod
 - [DigitalOcean Kubernetes screencast]()
 - [Documentation: ```kubeclt```](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [Documentation: cert-manager](https://cert-manager.io/docs/concepts/)
+- [Repository: cert-manager](https://github.com/jetstack/cert-manager)  
 - [Tutorial: How to Set Up an Nginx Ingress with Cert-Manager on DigitalOcean Kubernetes](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-with-cert-manager-on-digitalocean-kubernetes)
 - [Tutorial: How to Create, Edit, and Delete DNS Records](https://www.digitalocean.com/docs/networking/dns/how-to/manage-records/)
 - [Documentation: Kubernetes Managing Resources Guide](https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment)
