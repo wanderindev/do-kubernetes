@@ -1,10 +1,9 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: wid-ingress
   annotations:
-    kubernetes.io/ingress.class: nginx
-    certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   tls:
   - hosts:
@@ -27,78 +26,130 @@ spec:
   - host: anafeliu.com
     http:
       paths:
-      - backend:
-          serviceName: anafeliu-web
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: anafeliu-web
+            port:
+              number: 80
   - host: www.anafeliu.com
     http:
       paths:
-      - backend:
-          serviceName: anafeliu-web
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: anafeliu-web
+            port:
+              number: 80
   - host: felaro.org
     http:
       paths:
-      - backend:
-          serviceName: felaro-web
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: felaro-web
+            port:
+              number: 80
   - host: www.felaro.org
     http:
       paths:
-      - backend:
-          serviceName: felaro-web
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: felaro-web
+            port:
+              number: 80
   - host: feliu.io
     http:
       paths:
-      - backend:
-          serviceName: feliuio-web
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: feliuio-web
+            port:
+              number: 80
   - host: www.feliu.io
     http:
       paths:
-      - backend:
-          serviceName: feliuio-web
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: feliuio-web
+            port:
+              number: 80
   - host: api.calcfina.com
     http:
       paths:
-      - backend:
-          serviceName: api-calcfina
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: api-calcfina
+            port:
+              number: 80
   - host: calcfina.com
     http:
       paths:
-      - backend:
-          serviceName: calcfina-web
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: calcfina-web
+            port:
+              number: 80
   - host: www.calcfina.com
     http:
       paths:
-      - backend:
-          serviceName: calcfina-web
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: calcfina-web
+            port:
+              number: 80
   - host: uslpanama.com
     http:
       paths:
-      - backend:
-          serviceName: usl-web
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: usl-web
+            port:
+              number: 80
   - host: www.uslpanama.com
     http:
       paths:
-      - backend:
-          serviceName: usl-web
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: usl-web
+            port:
+              number: 80
   - host: wallcouture.com.pa
     http:
       paths:
-      - backend:
-          serviceName: wallcouture-web
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: wallcouture-web
+            port:
+              number: 80
   - host: www.wallcouture.com.pa
     http:
       paths:
-      - backend:
-          serviceName: wallcouture-web
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: wallcouture-web
+            port:
+              number: 80
