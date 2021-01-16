@@ -42,7 +42,7 @@ Before you can use this repository contents, you must have a Kubernetes cluster 
 4. In the **"Choose cluster capacity"** section:
    -  Enter a pool name or leave the default.
    -  Select the number of nodes. I've used 2 for almost two years without any issues but choose something that makes sense for your use case.  You can always add or delete nodes as needed later.
-   -  Select the node plan.  I use the 2.5 GB RAM / 2 vCPUs
+   -  Select the node plan.  I use the 2 GB RAM / 1 vCPUs
 5. Modify the cluster's name or leave the default.
 6. Click **Create Cluster**.  Your new cluster will be ready in about 4 minutes. You will get redirected to a **"Getting Started"** page.
 
