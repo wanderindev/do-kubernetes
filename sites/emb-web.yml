@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: emb-web
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: emb-web
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emb-web
+spec:
+  selector:
+    matchLabels:
+      app: emb-web
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: emb-web
+    spec:
+      containers:
+      - name: emb-web
+        image: wanderindev/emb-web:latest
+        ports:
+        - containerPort: 80

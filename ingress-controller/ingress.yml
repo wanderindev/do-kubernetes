@@ -9,6 +9,9 @@ spec:
   - hosts:
     - anafeliu.com
     - www.anafeliu.com
+    - earth-mars-and-beyond.com
+    - www.earth-mars-and-beyond.com
+    - api.earth-mars-and-beyond.com
     - felaro.org
     - www.felaro.org
     - feliu.io
