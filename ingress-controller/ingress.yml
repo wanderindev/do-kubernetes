@@ -46,6 +46,36 @@ spec:
             name: anafeliu-web
             port:
               number: 80
+  - host: earth-mars-and-beyond.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: emb-web
+            port:
+              number: 80
+  - host: www.earth-mars-and-beyond.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: emb-web
+            port:
+              number: 80
+  - host: api.earth-mars-and-beyond.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: api-emb
+            port:
+              number: 80
   - host: felaro.org
     http:
       paths:
