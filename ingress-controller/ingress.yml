@@ -16,6 +16,8 @@ spec:
     - www.felaro.org
     - feliu.io
     - www.feliu.io
+    - fun-with-dinos.com
+    - www.fun-with-dinos.com
     - calcfina.com
     - www.calcfina.com
     - api.calcfina.com
@@ -114,6 +116,26 @@ spec:
         backend:
           service:
             name: feliuio-web
+            port:
+              number: 80
+  - host: fun-with-dinos.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: dinos-web
+            port:
+              number: 80
+  - host: www.fun-with-dinos.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: dinos-web
             port:
               number: 80
   - host: api.calcfina.com

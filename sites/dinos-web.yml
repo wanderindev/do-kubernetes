@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dinos-web
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: dinos-web
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dinos-web
+spec:
+  selector:
+    matchLabels:
+      app: dinos-web
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dinos-web
+    spec:
+      containers:
+      - name: dinos-web
+        image: wanderindev/dinos-web:latest
+        ports:
+        - containerPort: 80
